@@ -23,9 +23,9 @@ Variable
 require('recaptcha-master/src/autoload.php');
 
 /* ReCaptch Secret */
-$recaptchaSecret = '6Ldbkt4aAAAAAE0palC6Kcu038SCLSC1eaoPNAOT';
+$recaptchaSecret = '6Ldbkt4aAAAAANYLMrZWO2jh2cMRnf9fVcwI7WSs';
 
-$dzEmailTo 		= "hello@voltron.africa";   /* Receiver Email Address */
+$dzEmailTo 		= "jivie@voltron.africa";   /* Receiver Email Address */
 $dzEmailFrom    = "Website";
 
 function pr($value)
@@ -36,42 +36,40 @@ function pr($value)
 }
 
 try {
-    if (!empty($_POST)) {
+	if (!empty($_POST)) {
 
-        /* validate the ReCaptcha, if something is wrong, we throw an Exception,
+		/* validate the ReCaptcha, if something is wrong, we throw an Exception,
 			i.e. code stops executing and goes to catch() block */
-        
-        if (!isset($_POST['g-recaptcha-response'])) {
-            $dzRes['status'] = 0;
+
+		if (!isset($_POST['g-recaptcha-response'])) {
+			$dzRes['status'] = 0;
 			$dzRes['msg'] = 'ReCaptcha is not set.';
 			echo json_encode($dzRes);
 			exit;
-        }
+		}
 
-        /* do not forget to enter your secret key from https://www.google.com/recaptcha/admin */
-        
-        $recaptcha = new \ReCaptcha\ReCaptcha($recaptchaSecret, new \ReCaptcha\RequestMethod\CurlPost());
-        
-        /* we validate the ReCaptcha field together with the user's IP address */
-        
-        $response = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
+		/* do not forget to enter your secret key from https://www.google.com/recaptcha/admin */
 
-        if (!$response->isSuccess()) {
-            $dzRes['status'] = 0;
+		$recaptcha = new \ReCaptcha\ReCaptcha($recaptchaSecret, new \ReCaptcha\RequestMethod\CurlPost());
+
+		/* we validate the ReCaptcha field together with the user's IP address */
+
+		$response = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
+
+		if (!$response->isSuccess()) {
+			$dzRes['status'] = 0;
 			$dzRes['msg'] = 'ReCaptcha was not validated.';
 			echo json_encode($dzRes);
 			exit;
-        }
-        
+		}
+
 		#### Contact Form Script ####
-		if($_POST['dzToDo'] == 'Contact')
-		{
+		if ($_POST['dzToDo'] == 'Contact') {
 			$dzName = trim(strip_tags($_POST['dzName']));
 			$dzEmail = trim(strip_tags($_POST['dzEmail']));
-			$dzMessage = strip_tags($_POST['dzMessage']);	
+			$dzMessage = strip_tags($_POST['dzMessage']);
 			$dzRes = "";
-			if (!filter_var($dzEmail, FILTER_VALIDATE_EMAIL)) 
-			{
+			if (!filter_var($dzEmail, FILTER_VALIDATE_EMAIL)) {
 				$dzRes['status'] = 0;
 				$dzRes['msg'] = 'Wrong Email Format.';
 			}
@@ -82,32 +80,27 @@ try {
 								Email: $dzEmail<br/>
 								Message: $dzMessage<br/>
 								";
-								
+
 			$dzOtherField = "";
-			if(!empty($_POST['dzOther']))
-			{
+			if (!empty($_POST['dzOther'])) {
 				$dzOther = $_POST['dzOther'];
 				$message = "";
-				foreach($dzOther as $key => $value)
-				{
-					$fieldName = ucfirst(str_replace('_',' ',$key));
-					$fieldValue = ucfirst(str_replace('_',' ',$value));
-					$dzOtherField .= $fieldName." : ".$fieldValue."<br>";
+				foreach ($dzOther as $key => $value) {
+					$fieldName = ucfirst(str_replace('_', ' ', $key));
+					$fieldValue = ucfirst(str_replace('_', ' ', $value));
+					$dzOtherField .= $fieldName . " : " . $fieldValue . "<br>";
 				}
 			}
-			$dzMailMessage .= $dzOtherField; 
-								
+			$dzMailMessage .= $dzOtherField;
+
 			$dzEmailHeader  	= "MIME-Version: 1.0\r\n";
 			$dzEmailHeader 		.= "Content-type: text/html; charset=iso-8859-1\r\n";
 			$dzEmailHeader 		.= "From:$dzEmailFrom <$dzEmail>";
-			$dzEmailHeader 		.= "Reply-To: $dzEmail\r\n"."X-Mailer: PHP/".phpversion();
-			if(mail($dzEmailTo, $dzMailSubject, $dzMailMessage, $dzEmailHeader))
-			{
+			$dzEmailHeader 		.= "Reply-To: $dzEmail\r\n" . "X-Mailer: PHP/" . phpversion();
+			if (mail($dzEmailTo, $dzMailSubject, $dzMailMessage, $dzEmailHeader)) {
 				$dzRes['status'] = 1;
 				$dzRes['msg'] = 'We have received your message successfully. Thanks for Contact.';
-			}
-			else
-			{
+			} else {
 				$dzRes['status'] = 0;
 				$dzRes['msg'] = 'Some problem in sending mail, please try again later.';
 			}
@@ -115,24 +108,22 @@ try {
 			exit;
 		}
 		#### Contact Form Script End ####
-		
+
 		#### Appointment Form Script ####
-		if($_POST['dzToDo'] == 'Appointment')
-		{
+		if ($_POST['dzToDo'] == 'Appointment') {
 			$dzName = trim(strip_tags($_POST['dzName']));
 			$dzEmail = trim(strip_tags($_POST['dzEmail']));
-			$dzMessage = strip_tags($_POST['dzMessage']);	
+			$dzMessage = strip_tags($_POST['dzMessage']);
 			$dzRes = "";
-			if(!filter_var($dzEmail, FILTER_VALIDATE_EMAIL)) 
-			{
+			if (!filter_var($dzEmail, FILTER_VALIDATE_EMAIL)) {
 				$dzRes['status'] = 0;
 				$dzRes['msg'] = 'Wrong Email Format.';
 				echo json_encode($dzRes);
 				exit;
 			}
-			
-				
-			
+
+
+
 			$dzMailSubject = 'Frost|Appointment Form: A Person want to contact';
 			$dzMailMessage	= 	"
 								A person want to contact you: <br><br>
@@ -141,42 +132,37 @@ try {
 								Message: $dzMessage<br/>
 								";
 			$dzOtherField = "";
-			if(!empty($_POST['dzOther']))
-			{
+			if (!empty($_POST['dzOther'])) {
 				$dzOther = $_POST['dzOther'];
 				$message = "";
-				foreach($dzOther as $key => $value)
-				{
-					$fieldName = ucfirst(str_replace('_',' ',$key));
-					$fieldValue = ucfirst(str_replace('_',' ',$value));
-					$dzOtherField .= $fieldName." : ".$fieldValue."<br>";
+				foreach ($dzOther as $key => $value) {
+					$fieldName = ucfirst(str_replace('_', ' ', $key));
+					$fieldValue = ucfirst(str_replace('_', ' ', $value));
+					$dzOtherField .= $fieldName . " : " . $fieldValue . "<br>";
 				}
 			}
-			$dzMailMessage .= $dzOtherField; 
-			
+			$dzMailMessage .= $dzOtherField;
+
 			$dzEmailHeader  	= "MIME-Version: 1.0\r\n";
 			$dzEmailHeader 		.= "Content-type: text/html; charset=iso-8859-1\r\n";
 			$dzEmailHeader 		.= "From:$dzEmailFrom <$dzEmail>";
-			$dzEmailHeader 		.= "Reply-To: $dzEmail\r\n"."X-Mailer: PHP/".phpversion();
-			if(mail($dzEmailTo, $dzMailSubject, $dzMailMessage, $dzEmailHeader))
-			{
+			$dzEmailHeader 		.= "Reply-To: $dzEmail\r\n" . "X-Mailer: PHP/" . phpversion();
+			if (mail($dzEmailTo, $dzMailSubject, $dzMailMessage, $dzEmailHeader)) {
 				$dzRes['status'] = 1;
 				$dzRes['msg'] = 'We have received your message successfully. Thanks for Contact.';
-			}
-			else
-			{
+			} else {
 				$dzRes['status'] = 0;
 				$dzRes['msg'] = 'Some problem in sending mail, please try again later.';
 			}
 			echo json_encode($dzRes);
 			exit;
-		}	
+		}
 		#### Appointment Form Script End ####
-		
+
 	}
 } catch (\Exception $e) {
-    $dzRes['status'] = 0;
-	$dzRes['msg'] = $e->getMessage().'Some problem in sending mail, please try again later.';
+	$dzRes['status'] = 0;
+	$dzRes['msg'] = $e->getMessage() . 'Some problem in sending mail, please try again later.';
 	echo json_encode($dzRes);
 	exit;
 }
