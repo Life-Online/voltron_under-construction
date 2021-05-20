@@ -1,0 +1,11 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/voltrona/ public_html/
+      - /bin/cp -R images $DEPLOYPATH
+      - /bin/cp -R css $DEPLOYPATH
+      - /bin/cp -R js $DEPLOYPATH
+      - /bin/cp -R plugins $DEPLOYPATH
+      - /bin/cp -R script $DEPLOYPATH
+      - /bin/cp favicon.png $DEPLOYPATH
+      - /bin/cp index.html $DEPLOYPATH
